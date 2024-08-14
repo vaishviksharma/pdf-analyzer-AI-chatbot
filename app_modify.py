@@ -197,7 +197,7 @@ def main():
                     return
 
                 # Generate and display summary
-               summary = generate_full_summary(raw_text, lang)
+                summary = generate_full_summary(raw_text, lang)
                 st.session_state['summary'] = summary
                 st.session_state['pdf_processed'] = True
                 st.session_state['lang'] = lang
