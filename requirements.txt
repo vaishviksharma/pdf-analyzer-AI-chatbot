@@ -1,0 +1,7 @@
+streamlit
+python-dotenv
+langdetect
+unicodedata
+langchain-google-genai
+PyPDF2
+faiss-cpu
