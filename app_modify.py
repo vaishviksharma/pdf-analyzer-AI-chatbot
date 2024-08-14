@@ -55,7 +55,7 @@ def get_pdf_text(pdf_docs):
             for page in pdf_reader.pages:
                 text += page.extract_text()
         except Exception as e:
-            st.error(f"Error processing PDF '{pdf.name}': {str(e)}")
+            st.error(f"Error processing PDF: {str(e)}")
     return text
 
 # Function to split text into chunks
@@ -151,7 +151,7 @@ def generate_full_summary(text, lang):
     {combined_summary}
 
     कृपया लगभग 5-7 वाक्यों में एक अंतिम सारांश प्रदान करें, यह सुनिश्चित करते हुए कि सभी प्रमुख बिंदुओं को कवर किया गया है।
-    अंत में, सुनिश्चित करें कि सारांश को एक साफ-सुथरे और संरचित तरीके से प्रस्तुत करें, हेडर, सब-हेडर, बुलेट पॉइंट्स और यहां तक कि प्रतीकों, आइकनों का उपयोग करके सुंदरता से व्यक्त करें।अंत में, सुनिश्चित करें कि सारांश को एक साफ-सुथरे और संरचित तरीके से प्रस्तुत करें, पंक्तियों और स्तंभों, हेडर, सब-हेडर, बुलेट पॉइंट्स और यहां तक कि प्रतीकों, आइकनों का उपयोग करके सुंदरता से व्यक्त करें।
+    अंत में, सुनिश्चित करें कि सारांश को एक साफ-सुथरे और संरचित तरीके से प्रस्तुत करें, हेडर, सब-हेडर, बुलेट पॉइंट्स और यहां तक कि प्रतीकों, आइकनों का उपयोग करके सुंदरता से व्यक्त करें।
     """
     
     prompt = final_summary_prompt_en if lang == 'en' else final_summary_prompt_hi
@@ -183,10 +183,10 @@ def main():
 
     if pdf_docs:
         if st.button("Generate Document Summary"):
-            with st.spinner("Processing... )"):
-                raw_text = get_pdf_text(pdf_docs)
+            with st.spinner("Processing..."):
+                raw_text = get_pdf_text([pdf_docs])  # Pass as a list
                 if not raw_text.strip():
-                    st.error("No text could be extracted from the PDF. Please check if the file is valid and not empty. (PDF से कोई टेक्स्ट नहीं निकाला जा सका। कृपया जांचें कि फ़ाइल मान्य है और खाली नहीं है।)")
+                    st.error("No text could be extracted from the PDF. Please check if the file is valid and not empty.")
                     return
 
                 lang = detect_language(raw_text)
@@ -197,7 +197,7 @@ def main():
                     return
 
                 # Generate and display summary
-                summary = generate_full_summary(raw_text, lang)
+               summary = generate_full_summary(raw_text, lang)
                 st.session_state['summary'] = summary
                 st.session_state['pdf_processed'] = True
                 st.session_state['lang'] = lang
