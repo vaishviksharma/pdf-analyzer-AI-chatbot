@@ -6,12 +6,7 @@ import unicodedata
 
 from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI
 from PyPDF2 import PdfReader
-try:
-    from langchain.text_splitter import RecursiveCharacterTextSplitter
-    print("Import successful")
-except ImportError as e:
-    print(f"Import failed: {e}")
-
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores import FAISS
 from langchain.prompts import PromptTemplate
 from langchain.chains.question_answering import load_qa_chain
@@ -76,7 +71,7 @@ def get_text_chunks(text, chunk_size=4000, chunk_overlap=200):
 # Function to create a vector store from text chunks
 def get_vector_store(text_chunks):
     if not text_chunks:
-        st.error("No text could be extracted from the PDF. Please check if the file is valid and not empty.")
+        st.error("No text could be extracted from the PDF. \nPlease check if the file is valid and not empty.")
         return None
     
     embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key=GOOGLE_API_KEY)
@@ -174,21 +169,21 @@ def user_input(user_question, lang):
 
 # Streamlit app setup
 st.set_page_config(
-    page_title="Bilingual PDF Chatbot",
+    page_title="Document Summarizer",
     page_icon=":books:",
     layout="wide",
     initial_sidebar_state="auto"
 )
 
 def main():
-    st.header("Chat with PDF (चैट विद पीडीएफ)")
+    st.header("🖇️🖇️ DocDigest 📑📜")
 
     # File uploader in the main content area
-    pdf_docs = st.file_uploader("Upload your PDF (अपना PDF अपलोड करें)", accept_multiple_files=True, type=['pdf'])
+    pdf_docs = st.file_uploader("Upload your Document(.pdf)", accept_multiple_files=False, type=['pdf'])
 
     if pdf_docs:
-        if st.button("Process PDF (PDF प्रोसेस करें)"):
-            with st.spinner("Processing... (प्रोसेसिंग हो रही है...)"):
+        if st.button("Generate Document Summary"):
+            with st.spinner("Processing... )"):
                 raw_text = get_pdf_text(pdf_docs)
                 if not raw_text.strip():
                     st.error("No text could be extracted from the PDF. Please check if the file is valid and not empty. (PDF से कोई टेक्स्ट नहीं निकाला जा सका। कृपया जांचें कि फ़ाइल मान्य है और खाली नहीं है।)")
@@ -207,25 +202,25 @@ def main():
                 st.session_state['pdf_processed'] = True
                 st.session_state['lang'] = lang
 
-                st.subheader("Document Summary (दस्तावेज़ सारांश)")
+                st.subheader("Document Summary")
                 st.write(summary)
                 st.divider()
 
-                st.success("PDF processed successfully! (PDF सफलतापूर्वक प्रोसेस किया गया!)")
+                st.success("Summary Generated Successfully. ")
 
     # Display summary if available
     if 'summary' in st.session_state:
-        st.subheader("Document Summary (दस्तावेज़ सारांश)")
+        st.subheader("Document Summary ")
         st.write(st.session_state['summary'])
         st.divider()
 
     # Question input
-    user_question = st.text_input("Ask your question about the document (दस्तावेज़ के बारे में अपना प्रश्न पूछें)")
+    user_question = st.text_input("Ask your question about the document ")
 
     if user_question and st.session_state.get('pdf_processed', False):
         user_input(user_question, st.session_state['lang'])
     elif user_question:
-        st.warning("Please process a PDF before asking questions. (कृपया प्रश्न पूछने से पहले एक PDF प्रोसेस करें।)")
+        st.warning("Please process a PDF before asking questions. ")
 
 if __name__ == "__main__":
     main()
